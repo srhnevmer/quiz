@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -62,6 +64,7 @@ func formatData(data [][]string) []problem {
 
 func (q *quiz) run() {
 	for i := range q.problems {
+		clear()
 		q.print(i)
 		ua, err := strconv.Atoi(handleUserAns())
 		if err != nil {
@@ -93,4 +96,18 @@ func handleUserAns() string {
 		log.Fatal(err)
 	}
 	return strings.TrimSpace(s.Text())
+}
+
+func clear() {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	default:
+		cmd = exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
 }
