@@ -22,9 +22,8 @@ type problem struct {
 }
 
 type quiz struct {
-	problems        []problem
-	numCorrectAns   uint8
-	numIncorrectAns uint8
+	numCorrectAns uint8
+	problems      []problem
 }
 
 func (q *quiz) makeProblemList() {
@@ -66,20 +65,18 @@ func (q *quiz) run() {
 		q.print(i)
 		ua, err := strconv.Atoi(handleUserAns())
 		if err != nil {
-			q.numIncorrectAns++
 			continue
 		}
 
 		a, _ := strconv.Atoi(q.problems[i].answer)
 		if a != ua {
-			q.numIncorrectAns++
 			continue
 		}
 
 		q.numCorrectAns++
 	}
 
-	fmt.Fprintf(os.Stdout, "Number of correct answers: %d\nNumber of incorrect answers: %d\n", q.numCorrectAns, q.numIncorrectAns)
+	fmt.Fprintf(os.Stdout, "Number of correct answers: %d\nTotal number of problems: %d\n", q.numCorrectAns, len(q.problems))
 }
 
 func (q quiz) print(num int) {
