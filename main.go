@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"log"
+	"math/rand/v2"
 	"os"
 	"os/exec"
 	"runtime"
@@ -12,9 +14,22 @@ import (
 	"strings"
 )
 
+var (
+	fileName    string
+	changeOrder bool
+)
+
+func init() {
+	flag.StringVar(&fileName, "n", "problems", "set the name of the file with the problems")
+	flag.BoolVar(&changeOrder, "c", false, "change the order of problems")
+}
+
 func main() {
+	flag.Parse()
+
 	var q quiz
-	q.makeProblemList()
+	q.fileName = fileName
+	q.makeProblemList(changeOrder)
 	q.run()
 }
 
@@ -24,12 +39,13 @@ type problem struct {
 }
 
 type quiz struct {
+	fileName      string
 	numCorrectAns uint8
 	problems      []problem
 }
 
-func (q *quiz) makeProblemList() {
-	file, err := os.Open("problems.csv")
+func (q *quiz) makeProblemList(flag bool) {
+	file, err := os.Open(fmt.Sprintf("%s.csv", q.fileName))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,7 +56,15 @@ func (q *quiz) makeProblemList() {
 		log.Fatal(err)
 	}
 
-	q.problems = formatData(data)
+	switch d := formatData(data); flag {
+	case false:
+		q.problems = d
+	default:
+		rand.Shuffle(len(d), func(i, j int) {
+			d[i], d[j] = d[j], d[i]
+		})
+		q.problems = d
+	}
 }
 
 func formatData(data [][]string) []problem {
@@ -82,9 +106,9 @@ func (q *quiz) run() {
 	fmt.Fprintf(os.Stdout, "Number of correct answers: %d\nTotal number of problems: %d\n", q.numCorrectAns, len(q.problems))
 }
 
-func (q quiz) print(num int) {
+func (q quiz) print(idx int) {
 	var str strings.Builder
-	str.WriteString(fmt.Sprintf("Problem: %d\nQ: %s\nA: ", num+1, q.problems[num].question))
+	str.WriteString(fmt.Sprintf("Problem: %d\nQ: %s\nA: ", idx+1, q.problems[idx].question))
 	fmt.Fprint(os.Stdout, str.String())
 }
 
