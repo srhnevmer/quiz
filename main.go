@@ -15,21 +15,20 @@ import (
 )
 
 var (
-	fileName    string
-	changeOrder bool
+	fileName string
+	reorder  bool
 )
 
 func init() {
 	flag.StringVar(&fileName, "n", "problems", "set the name of the file with the problems")
-	flag.BoolVar(&changeOrder, "c", false, "change the order of problems")
+	flag.BoolVar(&reorder, "c", false, "change the order of problems")
 }
 
 func main() {
 	flag.Parse()
 
-	var q quiz
-	q.fileName = fileName
-	q.makeProblemList(changeOrder)
+	q := quiz{fileName: fileName}
+	q.makeProblemList(reorder)
 	q.run()
 }
 
@@ -57,12 +56,12 @@ func (q *quiz) makeProblemList(flag bool) {
 	}
 
 	switch d := formatData(data); flag {
-	case false:
-		q.problems = d
-	default:
+	case true:
 		rand.Shuffle(len(d), func(i, j int) {
 			d[i], d[j] = d[j], d[i]
 		})
+		q.problems = d
+	default:
 		q.problems = d
 	}
 }
@@ -90,12 +89,12 @@ func (q *quiz) run() {
 	for i := range q.problems {
 		clear()
 		q.print(i)
+		a, _ := strconv.Atoi(q.problems[i].answer)
 		ua, err := strconv.Atoi(handleUserAns())
 		if err != nil {
 			continue
 		}
 
-		a, _ := strconv.Atoi(q.problems[i].answer)
 		if a != ua {
 			continue
 		}
