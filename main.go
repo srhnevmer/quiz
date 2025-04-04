@@ -16,19 +16,19 @@ import (
 
 var (
 	fileName string
-	reorder  bool
+	shuffle  bool
 )
 
 func init() {
 	flag.StringVar(&fileName, "n", "problems", "set the name of the file with the problems")
-	flag.BoolVar(&reorder, "c", false, "change the order of problems")
+	flag.BoolVar(&shuffle, "s", false, "change the order of problems")
 }
 
 func main() {
 	flag.Parse()
 
 	q := quiz{fileName: fileName}
-	q.makeProblemList(reorder)
+	q.makeProblemList(shuffle)
 	q.run()
 }
 
