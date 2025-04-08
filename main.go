@@ -14,21 +14,13 @@ import (
 	"strings"
 )
 
-var (
-	fileName string
-	shuffle  bool
-)
-
-func init() {
-	flag.StringVar(&fileName, "n", "problems", "set the name of the file with the problems")
-	flag.BoolVar(&shuffle, "s", false, "change the order of problems")
-}
-
 func main() {
+	fileName := flag.String("n", "problems", "set the name of the file with the problems")
+	shuffle := flag.Bool("s", false, "change the order of problems")
 	flag.Parse()
 
-	q := quiz{fileName: fileName}
-	q.makeProblemList(shuffle)
+	q := quiz{fileName: *fileName}
+	q.makeProblemList(*shuffle)
 	q.run()
 }
 
