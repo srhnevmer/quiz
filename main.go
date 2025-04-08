@@ -48,15 +48,13 @@ func (q *quiz) makeProblemList() {
 		log.Fatal(err)
 	}
 
-	switch d := formatData(data); q.reorder {
-	case true:
+	d := formatData(data)
+	if q.reorder {
 		rand.Shuffle(len(d), func(i, j int) {
 			d[i], d[j] = d[j], d[i]
 		})
-		q.problems = d
-	default:
-		q.problems = d
 	}
+	q.problems = d
 }
 
 func formatData(data [][]string) []problem {
