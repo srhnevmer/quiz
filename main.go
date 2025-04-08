@@ -16,11 +16,11 @@ import (
 
 func main() {
 	fileName := flag.String("n", "problems", "set the name of the file with the problems")
-	shuffle := flag.Bool("s", false, "change the order of problems")
+	reorder := flag.Bool("r", false, "change the order of problems")
 	flag.Parse()
 
-	q := quiz{fileName: *fileName}
-	q.makeProblemList(*shuffle)
+	q := quiz{fileName: *fileName, reorder: *reorder}
+	q.makeProblemList()
 	q.run()
 }
 
@@ -31,11 +31,12 @@ type problem struct {
 
 type quiz struct {
 	fileName      string
+	reorder       bool
 	numCorrectAns uint8
 	problems      []problem
 }
 
-func (q *quiz) makeProblemList(flag bool) {
+func (q *quiz) makeProblemList() {
 	file, err := os.Open(fmt.Sprintf("%s.csv", q.fileName))
 	if err != nil {
 		log.Fatal(err)
@@ -47,7 +48,7 @@ func (q *quiz) makeProblemList(flag bool) {
 		log.Fatal(err)
 	}
 
-	switch d := formatData(data); flag {
+	switch d := formatData(data); q.reorder {
 	case true:
 		rand.Shuffle(len(d), func(i, j int) {
 			d[i], d[j] = d[j], d[i]
