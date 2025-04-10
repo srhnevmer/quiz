@@ -79,7 +79,7 @@ Loop:
 	for {
 		clear()
 		fmt.Fprintf(os.Stdout, "This quiz has a time limit\nYou have %d seconds to complete this quiz\nPress [y]es to continue or [n]o to exit: ", q.timeLimit)
-		switch in := userIn(); {
+		switch in := userInput(); {
 		case bytes.Equal(in, []byte{121}), bytes.Equal(in, []byte{121, 101, 115}):
 			break Loop
 		case bytes.Equal(in, []byte{110}), bytes.Equal(in, []byte{110, 111}):
@@ -98,7 +98,7 @@ Loop:
 		clear()
 		q.print(i)
 		a, _ := strconv.Atoi(q.problems[i].answer)
-		ua, err := strconv.Atoi(string(userIn()))
+		ua, err := strconv.Atoi(string(userInput()))
 		if err != nil {
 			continue
 		}
@@ -133,7 +133,7 @@ func clear() {
 	}
 }
 
-func userIn() []byte {
+func userInput() []byte {
 	s := bufio.NewScanner(os.Stdin)
 	s.Scan()
 	err := s.Err()
