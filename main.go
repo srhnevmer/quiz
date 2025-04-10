@@ -66,22 +66,12 @@ func (q *quiz) makeProblemList() {
 }
 
 func formatData(data [][]string) []problem {
-	list := make([]problem, 0, 5)
-	for _, line := range data {
-		var p problem
-		for i, str := range line {
-			switch i {
-			case 0:
-				p.question = str
-			default:
-				p.answer = str
-			}
-		}
-		list = append(list, p)
+	list := make([]problem, len(data))
+	for i, line := range data {
+		list[i].question = line[0]
+		list[i].answer = line[1]
 	}
-	res := make([]problem, len(list))
-	copy(res, list)
-	return res
+	return list
 }
 
 func (q *quiz) run() {
